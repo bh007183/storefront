@@ -14,8 +14,9 @@ class Collection(models.Model):
     featured_product = models.ForeignKey('Product', on_delete=models.SET_NULL, null=True, related_name='+')
 class Product(models.Model):
     title = models.CharField(max_length=255) 
+    slug = models.SlugField()
     description = models.TextField()
-    price = models.DecimalField(max_digits=6, decimal_places=2)
+    unit_price = models.DecimalField(max_digits=6, decimal_places=2)
     inventory = models.IntegerField()
     last_update = models.DateTimeField(auto_now=True)
     collection = models.ForeignKey(Collection, on_delete=models.PROTECT)
@@ -36,7 +37,9 @@ class Customer(models.Model):
     phone = models.CharField(max_length=255)
     birth_date = models.DateField(null=True)
     membership = models.CharField(max_length=1, choices=MEMBERSHIP_CHOICES, default=MEMBERSHIP_BRONZE)
-    order = models.ForeignKey('Order', on_delete = models.PROTECT)
+    order = models.ForeignKey('Order', on_delete = models.PROTECT, null=True)
+   
+        
 class Order(models.Model):
     PENDING = 'P'
     COMPLETE = 'C'
@@ -54,7 +57,7 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.PROTECT)
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField()
-    unit_price = models.DecimalField(max_digits=6)
+    unit_price = models.DecimalField(max_digits=6, decimal_places=2)
 class Cart(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
   
@@ -66,3 +69,4 @@ class Address(models.Model):
     street = models.CharField(max_length=255)
     city = models.CharField(max_length=255)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    zipcode = models.CharField(max_length=10)
